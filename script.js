@@ -15,6 +15,7 @@ window.$g = $g;
 astronaut.unpack();
 
 import * as home from "./home.js";
+import * as searchView from "./searchview.js";
 
 $g.waitForLoad().then(function() {
     return $g.l10n.selectLocaleFromResources({
@@ -25,13 +26,23 @@ $g.waitForLoad().then(function() {
         return locale.translate(...arguments);
     };
 
+    $g.sel("body").setAttribute("aui-mode", "web");
+
     var homeScreen = home.HomeScreen() ();
+
+    var screenContainer = Container() (
+        homeScreen
+    );
+
+    homeScreen.on("search", function(event) {
+        var searchScreen = searchView.SearchScreen({query: event.detail.query}) ();
+
+        screenContainer.add(searchScreen);
+
+        searchScreen.screenFade();
+    });
 
     homeScreen.show();
 
-    $g.sel("body").setAttribute("aui-mode", "web");
-
-    astronaut.render(
-        homeScreen
-    );
+    astronaut.render(screenContainer);
 });

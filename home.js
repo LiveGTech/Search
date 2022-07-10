@@ -9,18 +9,23 @@
 
 import * as astronaut from "https://opensource.liveg.tech/Adapt-UI/astronaut/astronaut.js";
 
+import * as layout from "./layout.js";
+
 export var HomeScreen = astronaut.component("HomeScreen", function(props, children) {
-    return Screen (
-        NavigationBar({
-            styles: {
-                "position": "static"
-            }
-        }) (
-            Link() (
-                Image("https://liveg.tech/logo.png") ()
-            ),
-            Link({attributes: {"aui-selected": true}}) (_("search"))
-        ),
+    var searchInput = Input({
+        type: "search",
+        placeholder: _("searchInput_placeholder"),
+        styles: {
+            "background-color": "rgba(255, 255, 255, 0.6)"
+        }
+    }) ();
+
+    var screen = Screen({
+        styles: {
+            "background-color": layout.getThemeData().background
+        }
+    }) (
+        layout.GeneralNavigationBar() (),
         Page({
             shown: true,
             styles: {
@@ -28,7 +33,8 @@ export var HomeScreen = astronaut.component("HomeScreen", function(props, childr
                 "flex-direction": "column",
                 "justify-content": "center",
                 "min-height": "calc(100% - 9rem)",
-                "margin": "0"
+                "margin": "0",
+                "background-color": "inherit"
             }
         }) (
             Section({
@@ -41,7 +47,7 @@ export var HomeScreen = astronaut.component("HomeScreen", function(props, childr
                         "max-width": "40rem"
                     }
                 }) (
-                    Input({type: "search", placeholder: _("searchInput_placeholder")}) ()
+                    searchInput
                 )
             )
         ),
@@ -49,10 +55,19 @@ export var HomeScreen = astronaut.component("HomeScreen", function(props, childr
             styles: {
                 "min-height": "4rem",
                 "padding-top": "1.3rem",
-                "padding-bottom": "1.3rem"
+                "padding-bottom": "1.3rem",
+                "background-color": "inherit"
             }
         }) (
             Text("Hi")
         )
     );
+
+    searchInput.on("keydown", function(event) {
+        if (event.key == "Enter") {
+            screen.emit("search", {query: searchInput.getValue()});
+        }
+    });
+
+    return screen;
 });

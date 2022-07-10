@@ -1,0 +1,14 @@
+{
+    "localeCode": "en_GB",
+    "metadata": {
+        "name": "English (United Kingdom)",
+        "nameShort": "English",
+        "textDirection": "ltr"
+    },
+    "source": {
+        "livegSearch": "LiveG Search",
+        "search": "Search",
+
+        "searchInput_placeholder": "Search the internet"
+    }
+}

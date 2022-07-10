@@ -54,19 +54,24 @@ export var WebResult = astronaut.component("WebResult", function(props, children
             level: 2,
             styles: {
                 "font-size": "1.2em",
-                "margin-bottom": "0"
+                "margin-bottom": "0",
+                "overflow-wrap": "break-word"
             }
         }) (Link(props.result.url) (props.result.title)),
         Paragraph({
             styles: {
                 "margin-top": "0",
                 "margin-bottom": "0.5em",
-                "color": "var(--blur)"
+                "color": "var(--blur)",
+                "overflow": "hidden",
+                "text-overflow": "ellipsis",
+                "white-space": "nowrap"
             }
         }) (props.result.url),
         Paragraph({
             styles: {
-                "margin-top": "0.5em"
+                "margin-top": "0.5em",
+                "overflow-wrap": "break-word"
             }
         }) (props.result.description)
     );

@@ -46,14 +46,14 @@ export function getWebResults(query) {
     }) : Promise.resolve()).then(function() {
         var results = [
             ...webIndexOn(webIndex.titles, query),
-            ...alterWeightings(webIndexOn(webIndex.phrases, query), 0.8),
-            ...alterWeightings(webIndexOn(webIndex.descriptions, query), 0.5)
+            ...alterWeightings(webIndexOn(webIndex.descriptions, query), 0.8),
+            ...alterWeightings(webIndexOn(webIndex.phrases, query), 0.5)
         ];
-            
+
         results = results.map((result) => new SearchResult(
                 result.url,
                 result.title,
-                result.description,
+                (result.description || "").length == 200 ? result.description.trim() + "…" : result.description,
                 result.weighting
             ))
             .sort((a, b) => b.weighting - a.weighting)

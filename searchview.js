@@ -12,22 +12,38 @@ import * as astronaut from "https://opensource.liveg.tech/Adapt-UI/astronaut/ast
 import * as layout from "./layout.js";
 
 export var SearchScreen = astronaut.component("SearchScreen", function(props, children) {
-    return Screen (
+    var searchInput = Input({
+        type: "search",
+        value: props.query,
+        styles: {
+            "max-width": "40rem",
+            "background-color": "rgba(255, 255, 255, 0.6)"
+        }
+    }) ();
+
+    var screen = Screen (
         layout.GeneralNavigationBar() (),
         Section({
             styles: {
                 "background-color": layout.getThemeData().background
             }
         }) (
-            Input({
-                type: "search",
-                value: props.query,
-                styles: {
-                    "max-width": "40rem",
-                    "background-color": "rgba(255, 255, 255, 0.6)"
-                }
-            }) ()
+            searchInput
         ),
+        ...children
+    );
+
+    searchInput.on("keydown", function(event) {
+        if (event.key == "Enter") {
+            screen.emit("visitsearch", {query: searchInput.getValue()});
+        }
+    });
+
+    return screen;
+});
+
+export var WebSearchScreen = astronaut.component("SearchScreen", function(props, children) {
+    return SearchScreen(props) (
         Section (
             Container({
                 attributes: {

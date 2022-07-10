@@ -65,7 +65,7 @@ export var HomeScreen = astronaut.component("HomeScreen", function(props, childr
 
     searchInput.on("keydown", function(event) {
         if (event.key == "Enter") {
-            screen.emit("search", {query: searchInput.getValue()});
+            screen.emit("visitsearch", {query: searchInput.getValue()});
         }
     });
 

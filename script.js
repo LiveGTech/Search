@@ -34,13 +34,17 @@ $g.waitForLoad().then(function() {
         homeScreen
     );
 
-    homeScreen.on("search", function(event) {
-        var searchScreen = searchView.SearchScreen({query: event.detail.query}) ();
+    function onSearch(event) {
+        var searchScreen = searchView.WebSearchScreen({query: event.detail.query}) ();
+
+        searchScreen.on("visitsearch", onSearch);
 
         screenContainer.add(searchScreen);
 
         searchScreen.screenFade();
-    });
+    }
+
+    homeScreen.on("visitsearch", onSearch);
 
     homeScreen.show();
 

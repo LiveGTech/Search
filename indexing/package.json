@@ -1,0 +1,10 @@
+{
+    "name": "liveg-search-indexgen",
+    "version": "0.1.0",
+    "description": "Index data generator for LiveG Search.",
+    "author": "LiveG Technologies",
+    "dependencies": {
+        "jsdom": "^20.0.0",
+        "node-fetch": "^3.2.3"
+    }
+}

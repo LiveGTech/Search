@@ -1,0 +1,179 @@
+#!/usr/bin/env node
+
+/*
+    LiveG Search
+
+    Copyright (C) LiveG. All Rights Reserved.
+
+    https://search.liveg.tech
+    Licensed by the LiveG Open-Source Licence, which can be found at LICENCE.md.
+*/
+
+const fs = require("fs");
+const {URL} = require("url");
+const jsdom = require("jsdom");
+
+const fetch = function(...args) {
+    return import("node-fetch").then(function({default: fetch}) {
+        return fetch(...args);
+    });
+};
+
+const MAX_PHRASES = 10;
+const MAX_WORDS_FOR_PHRASE = 4;
+const MAX_DESCRIPTION_LENGTH = 200;
+const MAX_CHILDREN = 6;
+const MAX_WORDS_FOR_CHILD_TITLE = 3;
+
+var sitesList = fs.readFileSync("siteslist.txt", "utf-8").split("\n").filter((site) => site != "");
+
+var indexData = {
+    index: [],
+    titles: {},
+    phrases: {},
+    descriptions: {}
+};
+
+var promiseChain = Promise.resolve();
+var childrenLeft = 0;
+
+function saveIndexData() {
+    console.log("Saving index data...");
+
+    fs.writeFileSync("index.json", JSON.stringify(indexData));
+
+    return Promise.resolve();
+}
+
+function normaliseText(text) {
+    return text.trim().toLocaleLowerCase().replace(/[\s'‘’"“”,.!?:;*|\\/\-–—()`]/g, "");
+}
+
+function crawlSite(site, i = null, parent = null, childTitle = null) {
+    if (i == null) {
+        childrenLeft++;
+    }
+
+    promiseChain = promiseChain.then(function() {
+        if (i != null) {
+            console.log(`[${i + 1}/${sitesList.length}] Indexing: ${site}`);
+        } else {
+            console.log(`[${childrenLeft} left] Indexing secondary: ${site}`);
+
+            childrenLeft--;
+        }
+
+        var controller = new AbortController();
+        var signal = controller.signal;
+
+        setTimeout(function() {
+            controller.abort();
+        }, 3_000);
+
+        return fetch(site, {signal});
+    }).then(function(response) {
+        if (response.status != 200) {
+            console.log("(Skipped due to non-200 response)");
+
+            return Promise.resolve();
+        }
+
+        return response.text().then(function(data) {
+            var dom = new jsdom.JSDOM(data).window.document;
+            var parentName = parent?.title?.split(/[\-:\|·]/g)[0];
+            var position = indexData.index.length;
+            var item = {
+                title: (
+                    childTitle != null ?
+                    (childTitle.endsWith(parentName) ? childTitle : `${childTitle} - ${parentName}`) :
+                    dom.querySelector("title")?.textContent
+                ) || site,
+                url: site,
+                description: dom.querySelector("meta[name='description'], meta[description], meta[property='og:description']")?.getAttribute("content").substring(0, MAX_DESCRIPTION_LENGTH),
+                parent: parent?.url || undefined,
+                weighting: (i != null ? 0.5 + (0.5 * (1 - (i / sitesList.length))) : parent?.weighting - 0.1) || 0.4
+            };
+
+            indexData.titles[normaliseText(item.title.split(/[\-:\|·]/g)[0])] ||= [];
+            indexData.titles[normaliseText(item.title.split(/[\-:\|·]/g)[0])].push(position);
+
+            indexData.descriptions[normaliseText(item.description || "")] ||= [];
+            indexData.descriptions[normaliseText(item.description || "")].push(position);
+
+            dom.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach(function(element, i) {
+                if (i > MAX_PHRASES) {
+                    return;
+                }
+
+                var text = normaliseText(element.textContent || "");
+
+                if (text.length == 0 || element.textContent.trim().split(" ").length > MAX_WORDS_FOR_PHRASE) {
+                    return;
+                }
+
+                if (text.match(/\d+/) || text.match(/javascript.*available/i)) {
+                    return;
+                }
+
+                indexData.phrases[text] ||= [];
+                indexData.phrases[text].push(position);
+            });
+
+            if (i != null) {
+                dom.querySelectorAll("footer a").forEach(function(element, i) {
+                    if (i > MAX_CHILDREN) {
+                        return;
+                    }
+
+                    if (!element.hasAttribute("href")) {
+                        return;
+                    }
+
+                    var text = element.textContent.trim();
+
+                    if (text.split(" ").length > MAX_WORDS_FOR_CHILD_TITLE) {
+                        return;
+                    }
+
+                    var url = new URL(element.getAttribute("href"), site);
+
+                    if (!url.hostname.endsWith(new URL(site).hostname)) {
+                        return;
+                    }
+
+                    if (url.href == site) {
+                        return;
+                    }
+
+                    console.log(`Will also index \`${url}\``);
+
+                    crawlSite(url.href, null, item, text);
+                });
+            }
+
+            indexData.index.push(item);
+
+            return Promise.resolve();
+        });
+    }).catch(function(error) {
+        console.warn(error);
+
+        return Promise.resolve();
+    }).then(function() {
+        if (i == null && childrenLeft == 0) {
+            return saveIndexData();
+        }
+
+        return Promise.resolve();
+    });
+}
+
+console.log("Beginning indexing...");
+
+sitesList.forEach(function(site, i) {
+    crawlSite(site, i);
+});
+
+promiseChain = promiseChain.then(function() {
+    saveIndexData();
+});

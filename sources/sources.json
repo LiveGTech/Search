@@ -1,0 +1,11 @@
+{
+    "sources": [
+        {
+            "name": {
+                "en_GB": "Wikimedia"
+            },
+            "fallbackLocale": "en_GB",
+            "script": "./sources/wikimedia/source.js"
+        }
+    ]
+}

@@ -61,37 +61,52 @@ export var SearchScreen = astronaut.component("SearchScreen", function(props, ch
     return screen;
 });
 
+export var PageResultHeading = astronaut.component("PageResultHeading", function(props, children) {
+    return Heading({
+        level: 2,
+        styles: {
+            "font-size": "1.2em",
+            "margin-bottom": "0",
+            "overflow-wrap": "break-word"
+        }
+    }) (Link(props.url) (props.title));
+});
 
-export var WebResult = astronaut.component("WebResult", function(props, children) {
+export var PageResultUrl = astronaut.component("PageResultUrl", function(props, children) {
+    return Paragraph({
+        styles: {
+            "margin-top": "0",
+            "margin-bottom": "0.5em",
+            "color": "var(--url)",
+            "overflow": "hidden",
+            "text-overflow": "ellipsis",
+            "white-space": "nowrap"
+        }
+    }) (props.url);
+});
+
+export var PageResultContainer = astronaut.component("PageResultContainer", function(props, children) {
     return Container({
         styles: {
             "margin-bottom": "1rem"
         }
     }) (
-        Heading({
-            level: 2,
-            styles: {
-                "font-size": "1.2em",
-                "margin-bottom": "0",
-                "overflow-wrap": "break-word"
-            }
-        }) (Link(props.result.url) (props.result.title)),
-        Paragraph({
-            styles: {
-                "margin-top": "0",
-                "margin-bottom": "0.5em",
-                "color": "var(--url)",
-                "overflow": "hidden",
-                "text-overflow": "ellipsis",
-                "white-space": "nowrap"
-            }
-        }) (props.result.url),
+        PageResultHeading({title: props.result.title, url: props.result.url}) (),
+        PageResultUrl({url: props.result.url}) (),
         Paragraph({
             styles: {
                 "margin-top": "0.5em",
                 "overflow-wrap": "break-word"
             }
         }) (props.result.description)
+    );
+});
+
+export var InfoCardContainer = astronaut.component("InfoCardContainer", function(props, children) {
+    return Card (
+        Paragraph() (Text(props.result.contents)),
+        PageResultHeading({title: props.result.title, url: props.result.url}) (),
+        PageResultUrl({url: props.result.url}) ()
     );
 });
 
@@ -122,7 +137,13 @@ export var WebSearchScreen = astronaut.component("SearchScreen", function(props,
 
     searchResults.getWebResults(props.query).then(function(data) {
         resultsContainer.clear().add(
-            ...data.map((result) => WebResult({result}) ())
+            ...data.map(function(result) {
+                if (result instanceof searchResults.InfoCard) {
+                    return InfoCardContainer({result}) ();
+                }
+
+                return PageResultContainer({result}) ();
+            })
         );
     });
 

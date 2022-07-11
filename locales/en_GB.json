@@ -9,6 +9,8 @@
         "livegSearch": "LiveG Search",
         "search": "Search",
 
-        "searchInput_placeholder": "Search the internet"
+        "searchInput_placeholder": "Search the internet",
+
+        "footer_legal": "© and ™ LiveG"
     }
 }

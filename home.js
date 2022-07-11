@@ -53,13 +53,15 @@ export var HomeScreen = astronaut.component("HomeScreen", function(props, childr
         ),
         Footer({
             styles: {
+                "display": "flex",
                 "min-height": "4rem",
                 "padding-top": "1.3rem",
                 "padding-bottom": "1.3rem",
                 "background-color": "inherit"
             }
         }) (
-            Text("Hi")
+            TextFragment({attributes: {"aui-mode": "grow"}}) (),
+            Text(_("footer_legal"))
         )
     );
 

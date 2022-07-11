@@ -63,6 +63,27 @@ export var HomeScreen = astronaut.component("HomeScreen", function(props, childr
         )
     );
 
+    setTimeout(function() {
+        searchInput.focus();
+    });
+
+    $g.sel("body").on("keydown", function(event) {
+        if (screen.hasAttribute("hidden") || document.activeElement == searchInput.get()) {
+            return;
+        }
+
+        if (event.key == "/") {
+            searchInput.focus();
+        
+            var domElement = searchInput.get();
+
+            domElement.selectionStart = searchInput.getValue().length;
+            domElement.selectionEnd = searchInput.getValue().length;
+
+            event.preventDefault();
+        }
+    });
+
     searchInput.on("keydown", function(event) {
         if (event.key == "Enter") {
             screen.emit("visitsearch", {query: searchInput.getValue()});

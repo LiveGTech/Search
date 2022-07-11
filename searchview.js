@@ -7,6 +7,7 @@
     Licensed by the LiveG Open-Source Licence, which can be found at LICENCE.md.
 */
 
+import * as $g from "https://opensource.liveg.tech/Adapt-UI/src/adaptui.js";
 import * as astronaut from "https://opensource.liveg.tech/Adapt-UI/astronaut/astronaut.js";
 
 import * as layout from "./layout.js";
@@ -33,6 +34,23 @@ export var SearchScreen = astronaut.component("SearchScreen", function(props, ch
         ),
         ...children
     );
+
+    $g.sel("body").on("keydown", function(event) {
+        if (screen.hasAttribute("hidden") || document.activeElement == searchInput.get()) {
+            return;
+        }
+
+        if (event.key == "/") {
+            searchInput.focus();
+        
+            var domElement = searchInput.get();
+
+            domElement.selectionStart = searchInput.getValue().length;
+            domElement.selectionEnd = searchInput.getValue().length;
+
+            event.preventDefault();
+        }
+    });
 
     searchInput.on("keydown", function(event) {
         if (event.key == "Enter") {

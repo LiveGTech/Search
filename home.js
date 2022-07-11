@@ -16,7 +16,7 @@ export var HomeScreen = astronaut.component("HomeScreen", function(props, childr
         type: "search",
         placeholder: _("searchInput_placeholder"),
         styles: {
-            "background-color": "rgba(255, 255, 255, 0.6)"
+            "background-color": "var(--searchBackground)"
         }
     }) ();
 

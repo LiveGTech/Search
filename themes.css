@@ -1,0 +1,31 @@
+/*
+    LiveG Search
+
+    Copyright (C) LiveG. All Rights Reserved.
+
+    https://search.liveg.tech
+    Licensed by the LiveG Open-Source Licence, which can be found at LICENCE.md.
+*/
+
+:root {
+    --timeHue: 0;
+    --time: hsl(var(--timeHue), 85%, 80%);
+    --blue: hsl(220, 85%, 80%);
+    --yellow: hsl(60, 85%, 80%);
+    --red: hsl(0, 85%, 80%);
+    --green: hsl(120, 85%, 80%);
+    --searchBackground: rgba(255, 255, 255, 0.6);
+    --url: rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --time: hsl(var(--timeHue), 85%, 20%);
+        --blue: hsl(220, 85%, 20%);
+        --yellow: hsl(60, 85%, 20%);
+        --red: hsl(0, 85%, 20%);
+        --green: hsl(120, 85%, 20%);
+        --searchBackground: rgba(255, 255, 255, 0.2);
+        --url: rgba(255, 255, 255, 0.5);
+    }
+}

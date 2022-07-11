@@ -7,23 +7,26 @@
     Licensed by the LiveG Open-Source Licence, which can be found at LICENCE.md.
 */
 
+import * as $g from "https://opensource.liveg.tech/Adapt-UI/src/adaptui.js";
 import * as astronaut from "https://opensource.liveg.tech/Adapt-UI/astronaut/astronaut.js";
+
+$g.theme.setProperty("timeHue", String(Math.floor((360 / 60) * new Date().getMinutes())));
 
 export var themes = {
     time: {
-        background: `hsl(${Math.floor((360 / 60) * new Date().getMinutes())}, 85%, 80%)`
+        background: `var(--time)`
     },
     blue: {
-        background: "hsl(220, 85%, 80%)"
+        background: "var(--blue)"
     },
     yellow: {
-        background: "hsl(60, 85%, 80%)"
+        background: "var(--yellow)"
     },
     red: {
-        background: "hsl(0, 85%, 80%)"
+        background: "var(--red)"
     },
     green: {
-        background: "hsl(120, 85%, 80%)"
+        background: "var(--green)"
     }
 };
 
@@ -42,9 +45,9 @@ export var GeneralNavigationBar = astronaut.component("GeneralNavigationBar", fu
             "background-color": getThemeData().background
         }
     }) (
-        Link() (
+        Link("https://liveg.tech") (
             Image("https://liveg.tech/logo.png") ()
         ),
-        Link({attributes: {"aui-selected": true}}) (_("search"))
+        Link({source: "/", attributes: {"aui-selected": true}}) (_("search"))
     );
 });

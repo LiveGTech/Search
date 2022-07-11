@@ -18,7 +18,7 @@ export var SearchScreen = astronaut.component("SearchScreen", function(props, ch
         value: props.query,
         styles: {
             "max-width": "40rem",
-            "background-color": "rgba(255, 255, 255, 0.6)"
+            "background-color": "var(--searchBackground)"
         }
     }) ();
 
@@ -62,7 +62,7 @@ export var WebResult = astronaut.component("WebResult", function(props, children
             styles: {
                 "margin-top": "0",
                 "margin-bottom": "0.5em",
-                "color": "var(--blur)",
+                "color": "var(--url)",
                 "overflow": "hidden",
                 "text-overflow": "ellipsis",
                 "white-space": "nowrap"

@@ -11,19 +11,21 @@ import * as searchResults from "../../searchresults.js";
 
 export class WikimediaSource extends searchResults.Source {
     getWebResults(query) {
-        // TODO: Make this work with the Wikidata/Wikipedia APIs
+        return fetch(`https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&origin=*&titles=${encodeURIComponent(query)}`).then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            if (!data.query?.pages || data.query.pages.hasOwnProperty("-1")) {
+                return Promise.resolve([]);
+            }
 
-        if (query == "computer") {
             return Promise.resolve([
                 new searchResults.InfoCard(
-                    "https://en.wikipedia.org/wiki/Computer",
-                    "Computer - Wikipedia",
-                    `A computer is a digital electronic machine that can be programmed to carry out sequences of arithmetic or logical operations (computation) automatically. Modern computers can perform generic sets of operations known as programs. These programs enable computers to perform a wide range of tasks.`
+                    `https://en.wikipedia.org/wiki/${encodeURI(Object.values(data.query.pages)[0].title)}`,
+                    `${Object.values(data.query.pages)[0].title} - Wikipedia`,
+                    Object.values(data.query.pages)[0].extract.split(".").slice(0, 3).join(".") + "."
                 )
             ]);
-        }
-
-        return Promise.resolve([]);
+        });
     }
 }
 

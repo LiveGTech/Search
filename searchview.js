@@ -150,6 +150,7 @@ export var WebSearchScreen = astronaut.component("SearchScreen", function(props,
     return SearchScreen(props) (
         Section (
             Container({
+                classes: ["results"],
                 attributes: {
                     "aui-stack": "horizontal reverse"
                 },
@@ -157,11 +158,7 @@ export var WebSearchScreen = astronaut.component("SearchScreen", function(props,
                     "gap": "2rem"
                 }
             }) (
-                Container({
-                    styles: {
-                        "flex-basis": "unset"
-                    }
-                }) (
+                Container() (
                     Paragraph() ("All our fancy info cards about stuff go here")
                 ),
                 resultsContainer

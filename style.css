@@ -29,3 +29,9 @@
         --url: rgba(255, 255, 255, 0.5);
     }
 }
+
+@media (max-width: 1180px) {
+    .results {
+        display: block;
+    }
+}

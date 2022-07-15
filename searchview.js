@@ -104,14 +104,24 @@ export var PageResultContainer = astronaut.component("PageResultContainer", func
 
 export var InfoCardContainer = astronaut.component("InfoCardContainer", function(props, children) {
     return Card (
-        Paragraph() (Text(props.result.contents)),
+        Paragraph() (props.result.contents),
         PageResultHeading({title: props.result.title, url: props.result.url}) (),
         PageResultUrl({url: props.result.url}) ()
     );
 });
 
+export var SecondaryCardContainer = astronaut.component("SecondaryCardContainer", function(props, children) {
+    return Card() (
+        Heading() (props.result.title),
+        Paragraph() (props.result.classification || ""),
+        Paragraph() (props.result.contents),
+        Link(props.result.url) (props.result.attribution)
+    );
+});
+
 export var WebSearchScreen = astronaut.component("SearchScreen", function(props, children) {
     var resultsContainer = Container({
+        classes: ["primary"],
         styles: {
             "flex-grow": "0",
             "width": "40rem",
@@ -135,16 +145,28 @@ export var WebSearchScreen = astronaut.component("SearchScreen", function(props,
         )
     );
 
-    searchResults.getWebResults(props.query).then(function(data) {
-        resultsContainer.clear().add(
-            ...data.map(function(result) {
-                if (result instanceof searchResults.InfoCard) {
-                    return InfoCardContainer({result}) ();
-                }
+    var secondaryResultsContainer = Container({
+        classes: ["secondary"]
+    }) ();
 
-                return PageResultContainer({result}) ();
-            })
-        );
+    searchResults.getWebResults(props.query).then(function(data) {
+        resultsContainer.clear();
+
+        data.forEach(function(result) {
+            if (result instanceof searchResults.InfoCard) {
+                resultsContainer.add(InfoCardContainer({result}) ());
+
+                return;
+            }
+
+            if (result instanceof searchResults.SecondaryCard) {
+                secondaryResultsContainer.add(SecondaryCardContainer({result}) ());
+
+                return;
+            }
+
+            resultsContainer.add(PageResultContainer({result}) ());
+        });
     });
 
     return SearchScreen(props) (
@@ -158,9 +180,7 @@ export var WebSearchScreen = astronaut.component("SearchScreen", function(props,
                     "gap": "2rem"
                 }
             }) (
-                Container() (
-                    Paragraph() ("All our fancy info cards about stuff go here")
-                ),
+                secondaryResultsContainer,
                 resultsContainer
             )
         )

@@ -18,6 +18,10 @@
     --url: rgba(0, 0, 0, 0.5);
 }
 
+.results .secondary aui-card {
+    max-width: 30rem;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --time: hsl(var(--timeHue), 85%, 20%);
@@ -33,5 +37,9 @@
 @media (max-width: 1180px) {
     .results {
         display: block;
+    }
+
+    .results .secondary aui-card {
+        max-width: 40rem;
     }
 }

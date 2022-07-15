@@ -36,6 +36,17 @@ export class InfoCard {
     }
 }
 
+export class SecondaryCard {
+    constructor(url, title, contents, attribution, classification = null, image = null) {
+        this.url = url;
+        this.title = title;
+        this.contents = contents;
+        this.attribution = attribution;
+        this.classification = classification;
+        this.image = image; // TODO: Add support
+    }
+}
+
 function normaliseText(text) {
     return text.trim().toLocaleLowerCase().replace(/[\s'‘’"“”,.!?:;*|\\/\-–—()`]/g, "");
 }

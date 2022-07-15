@@ -11,6 +11,18 @@
 
         "searchInput_placeholder": "Search the internet",
 
-        "footer_legal": "© and ™ LiveG"
+        "footer_legal": "© and ™ LiveG",
+
+        "source_wikimedia_wikipedia": "Wikipedia",
+        "source_wikimedia_classification": {
+            "`{type}` == `organisation`": "Organisation",
+            "`{type}` == `individual`": "Individual",
+            "`{type}` == `planet`": "Planet",
+            "`{type}` == `country`": "Country",
+            "`{type}` == `city`": "City in {country}",
+            "`{type}` == `town`": "Town in {country}",
+            "`{type}` == `village`": "Village in {country}",
+            "`{type}` == `region`": "Region"
+        }
     }
 }

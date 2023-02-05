@@ -27,7 +27,7 @@ export var HomeScreen = astronaut.component("HomeScreen", function(props, childr
     }) (
         layout.GeneralNavigationBar() (),
         Page({
-            shown: true,
+            showing: true,
             styles: {
                 "display": "flex",
                 "flex-direction": "column",

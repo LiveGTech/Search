@@ -7,7 +7,6 @@
     Licensed by the LiveG Open-Source Licence, which can be found at LICENCE.md.
 */
 
-export var webIndex = null;
 export var sources = null;
 
 export class Source {
@@ -51,14 +50,6 @@ function normaliseText(text) {
     return text.trim().toLocaleLowerCase().replace(/[\s'‘’"“”,.!?:;*|\\/\-–—()`]/g, "");
 }
 
-function webIndexOn(object, query) {
-    return Object.keys(object)
-        .filter((key) => key.includes(normaliseText(query)))
-        .map((key) => object[key].map((position) => webIndex.index[position]))
-        .flat()
-    ;
-}
-
 function alterWeightings(results, factor) {
     return results.map((result) => ({
         ...result,
@@ -89,23 +80,17 @@ function loadSources() {
 export function getWebResults(query) {
     var results;
 
-    return (webIndex == null ? fetch("indexing/index.json").then(function(response) {
+    return fetch(`https://liveg.tech/api/search?query=${query}`).then(function(response) {
         return response.json();
     }).then(function(data) {
-        webIndex = data;
-    }) : Promise.resolve()).then(function() {
+        results = data.results;
+
         return loadSources();
     }).then(function() {
-        results = [
-            ...webIndexOn(webIndex.titles, query),
-            ...alterWeightings(webIndexOn(webIndex.descriptions, query), 0.8),
-            ...alterWeightings(webIndexOn(webIndex.phrases, query), 0.5)
-        ];
-
         results = results.map((result) => new PageResult(
                 result.url,
-                result.title,
-                (result.description || "").length == 200 ? result.description.trim() + "…" : result.description,
+                (result.title || "").length > 100 ? result.title.substring(0, 100) + "…" : result.title,
+                (result.description || "").length > 200 ? result.description.substring(0, 200) + "…" : result.description,
                 result.weighting
             ))
             .sort((a, b) => b.weighting - a.weighting)

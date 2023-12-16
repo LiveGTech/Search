@@ -57,8 +57,6 @@ export class WikimediaSource extends searchResults.Source {
         var thisScope = this;
         var values = this.getWikidataPropertyValues(info, "P31"); // "instance of"
 
-        console.log(values);
-
         function regionOfCountry(classification) {
             return thisScope.getWikidataEntityInfo(thisScope.getWikidataPropertyValues(info, "P17")[0]?.value.id).then(function(info) {
                 return Promise.resolve({

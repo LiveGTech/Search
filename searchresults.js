@@ -46,17 +46,6 @@ export class SecondaryCard {
     }
 }
 
-function normaliseText(text) {
-    return text.trim().toLocaleLowerCase().replace(/[\s'‘’"“”,.!?:;*|\\/\-–—()`]/g, "");
-}
-
-function alterWeightings(results, factor) {
-    return results.map((result) => ({
-        ...result,
-        weighting: result.weighting * factor
-    }));
-}
-
 function loadSources() {
     return (sources == null ? fetch("sources/sources.json").then(function(response) {
         return response.json();
@@ -80,7 +69,7 @@ function loadSources() {
 export function getWebResults(query) {
     var results;
 
-    return fetch(`https://liveg.tech/api/search?query=${query}`).then(function(response) {
+    return fetch(`https://liveg.tech/api/search?query=${encodeURIComponent(query)}&keywordWeighting=0.25&titleWeighting=0.75`).then(function(response) {
         return response.json();
     }).then(function(data) {
         results = data.results;

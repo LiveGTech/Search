@@ -97,6 +97,8 @@ export function getWebResults(query, weightings = {}) {
             .sort((a, b) => b.weighting - a.weighting)
         ;
 
+        results = results.slice(0, 20);
+
         return Promise.all(sources.map(function(source) {
             return source.instance.getWebResults(query).catch(function(error) {
                 console.warn(error);

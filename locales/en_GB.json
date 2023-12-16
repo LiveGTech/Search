@@ -11,6 +11,12 @@
 
         "searchInput_placeholder": "Search the internet...",
 
+        "advancedSearchOptions_title": "Customise your search",
+        "advancedSearchOptions_keywordWeighting": "Keyword weighting",
+        "advancedSearchOptions_referenceWeighting": "Reference weighting",
+        "advancedSearchOptions_titleWeighting": "Title weighting",
+        "advancedSearchOptions_intersectionWeighting": "Intersection weighting",
+
         "footer_legal": "© and ™ LiveG",
 
         "source_wikimedia_wikipedia": "Wikipedia",

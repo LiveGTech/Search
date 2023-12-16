@@ -66,10 +66,22 @@ function loadSources() {
     }) : Promise.resolve());
 }
 
-export function getWebResults(query) {
+export function getWebResults(query, weightings = {}) {
     var results;
 
-    return fetch(`https://liveg.tech/api/search?query=${encodeURIComponent(query)}&keywordWeighting=0.25&titleWeighting=0.75`).then(function(response) {
+    weightings.keywordWeighting ??= 0.25;
+    weightings.referenceWeighting ??= 0.5;
+    weightings.intersectionWeighting ??= 0.5;
+    weightings.titleWeighting ??= 0.75;
+
+    return fetch(
+        `https://liveg.tech/api/search` +
+        `?query=${encodeURIComponent(query)}` +
+        `&keywordWeighting=${encodeURIComponent(weightings.keywordWeighting)}` +
+        `&referenceWeighting=${encodeURIComponent(weightings.referenceWeighting)}` +
+        `&intersectionWeighting=${encodeURIComponent(weightings.intersectionWeighting)}` +
+        `&titleWeighting=${encodeURIComponent(weightings.titleWeighting)}`
+    ).then(function(response) {
         return response.json();
     }).then(function(data) {
         results = data.results;

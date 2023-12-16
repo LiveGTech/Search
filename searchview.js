@@ -145,29 +145,59 @@ export var WebSearchScreen = astronaut.component("SearchScreen", function(props,
         )
     );
 
-    var secondaryResultsContainer = Container({
-        classes: ["secondary"]
-    }) ();
+    var secondaryResultsContainer = Container() ();
 
-    searchResults.getWebResults(props.query).then(function(data) {
-        resultsContainer.clear();
+    var keywordWeightingSlider = RangeSliderInput({min: 0, max: 1, step: 0.01, value: 0.25}) ();
+    var referenceWeightingSlider = RangeSliderInput({min: 0, max: 1, step: 0.01, value: 0.5}) ();
+    var titleWeightingSlider = RangeSliderInput({min: 0, max: 1, step: 0.01, value: 0.75}) ();
+    var intersectionWeightingSlider = RangeSliderInput({min: 0, max: 1, step: 0.01, value: 0.5}) ();
 
-        data.forEach(function(result) {
-            if (result instanceof searchResults.InfoCard) {
-                resultsContainer.add(InfoCardContainer({result}) ());
+    var intersectionWeightingContainer = Label (
+        Text(_("advancedSearchOptions_intersectionWeighting")),
+        intersectionWeightingSlider
+    );
 
-                return;
-            }
+    function updateResults() {
+        var weightings = {
+            keywordWeighting: keywordWeightingSlider.getValue(),
+            referenceWeighting: referenceWeightingSlider.getValue(),
+            titleWeighting: titleWeightingSlider.getValue(),
+            intersectionWeighting: intersectionWeightingSlider.getValue()
+        };
+ 
+        searchResults.getWebResults(props.query, weightings).then(function(data) {
+            resultsContainer.clear();
+            secondaryResultsContainer.clear();
+    
+            data.forEach(function(result) {
+                if (result instanceof searchResults.InfoCard) {
+                    resultsContainer.add(InfoCardContainer({result}) ());
+    
+                    return;
+                }
+    
+                if (result instanceof searchResults.SecondaryCard) {
+                    secondaryResultsContainer.add(SecondaryCardContainer({result}) ());
+    
+                    return;
+                }
+    
+                resultsContainer.add(PageResultContainer({result}) ());
+            });
+        });
+    }
 
-            if (result instanceof searchResults.SecondaryCard) {
-                secondaryResultsContainer.add(SecondaryCardContainer({result}) ());
-
-                return;
-            }
-
-            resultsContainer.add(PageResultContainer({result}) ());
+    [keywordWeightingSlider, referenceWeightingSlider, titleWeightingSlider, intersectionWeightingSlider].forEach(function(slider) {
+        slider.on("change", function() {
+            updateResults();
         });
     });
+
+    if (props.query.trim().split(/\s+/).length == 1) {
+        intersectionWeightingContainer.hide();
+    }
+
+    updateResults();
 
     return SearchScreen(props) (
         Section (
@@ -180,7 +210,33 @@ export var WebSearchScreen = astronaut.component("SearchScreen", function(props,
                     "gap": "2rem"
                 }
             }) (
-                secondaryResultsContainer,
+                Container({
+                    classes: ["secondary"]
+                }) (
+                    secondaryResultsContainer,
+                    Container({
+                        attributes: {
+                            "aui-display": "desktop"
+                        }
+                    }) (
+                        Accordion() (
+                            Text(_("advancedSearchOptions_title")),
+                            Label (
+                                Text(_("advancedSearchOptions_keywordWeighting")),
+                                keywordWeightingSlider
+                            ),
+                            Label (
+                                Text(_("advancedSearchOptions_referenceWeighting")),
+                                referenceWeightingSlider
+                            ),
+                            Label (
+                                Text(_("advancedSearchOptions_titleWeighting")),
+                                titleWeightingSlider
+                            ),
+                            intersectionWeightingContainer
+                        )
+                    )
+                ),
                 resultsContainer
             )
         )

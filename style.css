@@ -18,8 +18,12 @@
     --url: rgba(0, 0, 0, 0.5);
 }
 
-.results .secondary aui-card {
-    max-width: 30rem;
+.results .secondary aui-card, .advancedSearchOptions {
+    max-width: 25rem;
+}
+
+.advancedSearchOptions :is(label, input, select) {
+    min-width: 0!important;
 }
 
 @media (prefers-color-scheme: dark) {

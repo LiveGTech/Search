@@ -13,6 +13,33 @@ import * as astronaut from "https://opensource.liveg.tech/Adapt-UI/astronaut/ast
 import * as layout from "./layout.js";
 import * as searchResults from "./searchresults.js";
 
+export const REFINEMENT_WEIGHTINGS = {
+    quickLookups: {
+        keywordWeighting: 0.1,
+        referenceWeighting: 0.5,
+        intersectionWeighting: 0.8,
+        titleWeighting: 0.9
+    },
+    popularPages: {
+        keywordWeighting: 0.2,
+        referenceWeighting: 0.9,
+        titleWeighting: 0.7,
+        intersectionWeighting: 0.5
+    },
+    inDepth: {
+        keywordWeighting: 0.7,
+        referenceWeighting: 0.3,
+        titleWeighting: 0.5,
+        intersectionWeighting: 0.8
+    },
+    precisePhrases: {
+        keywordWeighting: 0.3,
+        referenceWeighting: 0.2,
+        titleWeighting: 0.9,
+        intersectionWeighting: 0.8
+    }
+};
+
 export var SearchScreen = astronaut.component("SearchScreen", function(props, children) {
     var searchInput = Input({
         type: "search",
@@ -147,6 +174,10 @@ export var WebSearchScreen = astronaut.component("SearchScreen", function(props,
 
     var secondaryResultsContainer = Container() ();
 
+    var refinementInput = SelectionInput({value: "quickLookups"}) (
+        Object.keys(REFINEMENT_WEIGHTINGS).map((option) => SelectionInputOption({value: option}) (_(`advancedSearchOptions_refineFor_${option}`)))
+    );
+
     var keywordWeightingSlider = RangeSliderInput({min: 0, max: 1, step: 0.01, value: 0.1}) ();
     var referenceWeightingSlider = RangeSliderInput({min: 0, max: 1, step: 0.01, value: 0.5}) ();
     var titleWeightingSlider = RangeSliderInput({min: 0, max: 1, step: 0.01, value: 0.9}) ();
@@ -191,6 +222,8 @@ export var WebSearchScreen = astronaut.component("SearchScreen", function(props,
 
     [keywordWeightingSlider, referenceWeightingSlider, titleWeightingSlider, intersectionWeightingSlider].forEach(function(slider) {
         slider.on("change", function() {
+            refinementInput.setValue("");
+
             if (recentlyUpdatedResults) {
                 if (willUpdateResultsSoon) {
                     return;
@@ -212,6 +245,21 @@ export var WebSearchScreen = astronaut.component("SearchScreen", function(props,
 
             recentlyUpdatedResults = true;
         });
+    });
+
+    refinementInput.on("change", function() {
+        if (refinementInput.getValue() == "") {
+            return;
+        }
+
+        var weightings = REFINEMENT_WEIGHTINGS[refinementInput.getValue()];
+
+        keywordWeightingSlider.setValue(weightings.keywordWeighting);
+        referenceWeightingSlider.setValue(weightings.referenceWeighting);
+        titleWeightingSlider.setValue(weightings.titleWeighting);
+        intersectionWeightingSlider.setValue(weightings.intersectionWeighting);
+
+        updateResults();
     });
 
     if (props.query.trim().split(/\s+/).length == 1) {
@@ -236,12 +284,14 @@ export var WebSearchScreen = astronaut.component("SearchScreen", function(props,
                 }) (
                     secondaryResultsContainer,
                     Container({
-                        attributes: {
-                            "aui-display": "desktop"
-                        }
+                        classes: ["advancedSearchOptions"]
                     }) (
                         Accordion() (
                             Text(_("advancedSearchOptions_title")),
+                            Label (
+                                Text(_("advancedSearchOptions_refineFor")),
+                                refinementInput
+                            ),
                             Label (
                                 Text(_("advancedSearchOptions_keywordWeighting")),
                                 keywordWeightingSlider

@@ -12,6 +12,13 @@
         "searchInput_placeholder": "Search the internet...",
 
         "advancedSearchOptions_title": "Customise your search",
+
+        "advancedSearchOptions_refineFor": "Refine results suited for...",
+        "advancedSearchOptions_refineFor_quickLookups": "Quick lookups",
+        "advancedSearchOptions_refineFor_popularPages": "Popular and viral pages",
+        "advancedSearchOptions_refineFor_inDepth": "In-depth research",
+        "advancedSearchOptions_refineFor_precisePhrases": "Precise phrases",
+
         "advancedSearchOptions_keywordWeighting": "Keyword weighting",
         "advancedSearchOptions_referenceWeighting": "Reference weighting",
         "advancedSearchOptions_titleWeighting": "Title weighting",

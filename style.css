@@ -42,4 +42,8 @@
     .results .secondary aui-card {
         max-width: 40rem;
     }
+
+    .advancedSearchOptions {
+        display: none;
+    }
 }

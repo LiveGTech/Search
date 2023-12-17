@@ -147,10 +147,10 @@ export var WebSearchScreen = astronaut.component("SearchScreen", function(props,
 
     var secondaryResultsContainer = Container() ();
 
-    var keywordWeightingSlider = RangeSliderInput({min: 0, max: 1, step: 0.01, value: 0.25}) ();
+    var keywordWeightingSlider = RangeSliderInput({min: 0, max: 1, step: 0.01, value: 0.1}) ();
     var referenceWeightingSlider = RangeSliderInput({min: 0, max: 1, step: 0.01, value: 0.5}) ();
-    var titleWeightingSlider = RangeSliderInput({min: 0, max: 1, step: 0.01, value: 0.75}) ();
-    var intersectionWeightingSlider = RangeSliderInput({min: 0, max: 1, step: 0.01, value: 0.5}) ();
+    var titleWeightingSlider = RangeSliderInput({min: 0, max: 1, step: 0.01, value: 0.9}) ();
+    var intersectionWeightingSlider = RangeSliderInput({min: 0, max: 1, step: 0.01, value: 0.8}) ();
     var recentlyUpdatedResults = false;
     var willUpdateResultsSoon = false;
 

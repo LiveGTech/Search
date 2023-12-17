@@ -69,10 +69,10 @@ function loadSources() {
 export function getWebResults(query, weightings = {}) {
     var results;
 
-    weightings.keywordWeighting ??= 0.25;
+    weightings.keywordWeighting ??= 0.1;
     weightings.referenceWeighting ??= 0.5;
-    weightings.intersectionWeighting ??= 0.5;
-    weightings.titleWeighting ??= 0.75;
+    weightings.intersectionWeighting ??= 0.8;
+    weightings.titleWeighting ??= 0.9;
 
     return fetch(
         `https://liveg.tech/api/search` +

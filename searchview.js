@@ -151,6 +151,8 @@ export var WebSearchScreen = astronaut.component("SearchScreen", function(props,
     var referenceWeightingSlider = RangeSliderInput({min: 0, max: 1, step: 0.01, value: 0.5}) ();
     var titleWeightingSlider = RangeSliderInput({min: 0, max: 1, step: 0.01, value: 0.75}) ();
     var intersectionWeightingSlider = RangeSliderInput({min: 0, max: 1, step: 0.01, value: 0.5}) ();
+    var recentlyUpdatedResults = false;
+    var willUpdateResultsSoon = false;
 
     var intersectionWeightingContainer = Label (
         Text(_("advancedSearchOptions_intersectionWeighting")),
@@ -189,7 +191,26 @@ export var WebSearchScreen = astronaut.component("SearchScreen", function(props,
 
     [keywordWeightingSlider, referenceWeightingSlider, titleWeightingSlider, intersectionWeightingSlider].forEach(function(slider) {
         slider.on("change", function() {
+            if (recentlyUpdatedResults) {
+                if (willUpdateResultsSoon) {
+                    return;
+                }
+
+                willUpdateResultsSoon = true;
+
+                setTimeout(function() {
+                    updateResults();
+
+                    recentlyUpdatedResults = false;
+                    willUpdateResultsSoon = false;
+                }, 2_000);
+
+                return;
+            }
+
             updateResults();
+
+            recentlyUpdatedResults = true;
         });
     });
 
